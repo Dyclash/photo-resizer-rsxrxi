@@ -70,7 +70,7 @@ export default function HomeScreen() {
               color={colors.text}
             />
           </LinearGradient>
-          <Text style={styles.title}>iOS App Store Photo Resizer</Text>
+          <Text style={styles.title}>Resize Right</Text>
           <Text style={styles.subtitle}>
             Upload photos, resize to App Store specs, and generate promotional content
           </Text>
