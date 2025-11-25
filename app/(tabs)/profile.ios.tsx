@@ -1,22 +1,72 @@
 
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
+import { useColorScheme } from "react-native";
+import * as SystemUI from "expo-system-ui";
 
 export default function ProfileScreen() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
-  const [phone, setPhone] = useState("+1 (555) 123-4567");
-  const [location, setLocation] = useState("San Francisco, CA");
-  const [company, setCompany] = useState("Tech Startup Inc.");
+  const systemColorScheme = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
+  const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
+  const [isDataSharingEnabled, setIsDataSharingEnabled] = useState(false);
 
-  const handleSave = () => {
-    setIsEditing(false);
-    Alert.alert('Success', 'Profile updated successfully!');
+  const handleDarkModeToggle = async (value: boolean) => {
+    setIsDarkMode(value);
+    try {
+      // Update system UI background color based on theme
+      await SystemUI.setBackgroundColorAsync(value ? '#0F0F1E' : '#FFFFFF');
+      Alert.alert(
+        'Theme Changed',
+        `${value ? 'Dark' : 'Light'} mode activated. Please restart the app for full effect.`,
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.log('Error updating system UI:', error);
+    }
+  };
+
+  const handlePrivacySettings = () => {
+    Alert.alert(
+      'Privacy & Security',
+      'Your data is stored locally on your device. We do not collect or share any personal information without your explicit consent.',
+      [
+        {
+          text: 'Learn More',
+          onPress: () => {
+            Alert.alert(
+              'Data Privacy',
+              '• All photos are processed locally on your device\n• No data is sent to external servers\n• Your app descriptions and generated content are stored locally\n• You have full control over your data',
+              [{ text: 'OK' }]
+            );
+          }
+        },
+        { text: 'OK' }
+      ]
+    );
+  };
+
+  const handleClearData = () => {
+    Alert.alert(
+      'Clear App Data',
+      'This will remove all your saved photos, descriptions, and generated content. This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Clear Data',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert('Success', 'App data has been cleared.');
+          }
+        }
+      ]
+    );
   };
 
   const stats = [
@@ -50,23 +100,8 @@ export default function ProfileScreen() {
               <View style={styles.statusDot} />
             </View>
           </View>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.email}>{email}</Text>
-          
-          <TouchableOpacity 
-            style={styles.editButton}
-            onPress={() => setIsEditing(!isEditing)}
-          >
-            <IconSymbol
-              ios_icon_name={isEditing ? "checkmark.circle.fill" : "pencil.circle.fill"}
-              android_material_icon_name={isEditing ? "check_circle" : "edit"}
-              size={20}
-              color={colors.text}
-            />
-            <Text style={styles.editButtonText}>
-              {isEditing ? 'Save Changes' : 'Edit Profile'}
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.name}>Photo Resizer Pro</Text>
+          <Text style={styles.email}>Your App Store Assistant</Text>
         </LinearGradient>
 
         <View style={styles.statsContainer}>
@@ -87,153 +122,9 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
+          <Text style={styles.sectionTitle}>Appearance</Text>
           
-          <View style={styles.infoCard}>
-            <View style={styles.infoRow}>
-              <IconSymbol 
-                ios_icon_name="person.fill" 
-                android_material_icon_name="person" 
-                size={20} 
-                color={colors.primary} 
-              />
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Full Name</Text>
-                {isEditing ? (
-                  <TextInput
-                    style={styles.input}
-                    value={name}
-                    onChangeText={setName}
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                ) : (
-                  <Text style={styles.infoText}>{name}</Text>
-                )}
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <IconSymbol 
-                ios_icon_name="envelope.fill" 
-                android_material_icon_name="email" 
-                size={20} 
-                color={colors.secondary} 
-              />
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Email</Text>
-                {isEditing ? (
-                  <TextInput
-                    style={styles.input}
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                ) : (
-                  <Text style={styles.infoText}>{email}</Text>
-                )}
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <IconSymbol 
-                ios_icon_name="phone.fill" 
-                android_material_icon_name="phone" 
-                size={20} 
-                color={colors.accent} 
-              />
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Phone</Text>
-                {isEditing ? (
-                  <TextInput
-                    style={styles.input}
-                    value={phone}
-                    onChangeText={setPhone}
-                    keyboardType="phone-pad"
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                ) : (
-                  <Text style={styles.infoText}>{phone}</Text>
-                )}
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <IconSymbol 
-                ios_icon_name="location.fill" 
-                android_material_icon_name="location_on" 
-                size={20} 
-                color={colors.highlight} 
-              />
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Location</Text>
-                {isEditing ? (
-                  <TextInput
-                    style={styles.input}
-                    value={location}
-                    onChangeText={setLocation}
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                ) : (
-                  <Text style={styles.infoText}>{location}</Text>
-                )}
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <IconSymbol 
-                ios_icon_name="building.2.fill" 
-                android_material_icon_name="business" 
-                size={20} 
-                color={colors.success} 
-              />
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Company</Text>
-                {isEditing ? (
-                  <TextInput
-                    style={styles.input}
-                    value={company}
-                    onChangeText={setCompany}
-                    placeholderTextColor={colors.textSecondary}
-                  />
-                ) : (
-                  <Text style={styles.infoText}>{company}</Text>
-                )}
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preferences</Text>
-          
-          <TouchableOpacity style={styles.preferenceCard}>
-            <View style={styles.preferenceLeft}>
-              <IconSymbol 
-                ios_icon_name="bell.fill" 
-                android_material_icon_name="notifications" 
-                size={20} 
-                color={colors.primary} 
-              />
-              <Text style={styles.preferenceText}>Notifications</Text>
-            </View>
-            <IconSymbol 
-              ios_icon_name="chevron.right" 
-              android_material_icon_name="chevron_right" 
-              size={20} 
-              color={colors.textSecondary} 
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.preferenceCard}>
+          <View style={styles.preferenceCard}>
             <View style={styles.preferenceLeft}>
               <IconSymbol 
                 ios_icon_name="moon.fill" 
@@ -243,6 +134,28 @@ export default function ProfileScreen() {
               />
               <Text style={styles.preferenceText}>Dark Mode</Text>
             </View>
+            <Switch
+              value={isDarkMode}
+              onValueChange={handleDarkModeToggle}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={isDarkMode ? colors.primaryLight : colors.textSecondary}
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Privacy & Security</Text>
+          
+          <TouchableOpacity style={styles.preferenceCard} onPress={handlePrivacySettings}>
+            <View style={styles.preferenceLeft}>
+              <IconSymbol 
+                ios_icon_name="lock.fill" 
+                android_material_icon_name="lock" 
+                size={20} 
+                color={colors.accent} 
+              />
+              <Text style={styles.preferenceText}>Privacy Policy</Text>
+            </View>
             <IconSymbol 
               ios_icon_name="chevron.right" 
               android_material_icon_name="chevron_right" 
@@ -251,15 +164,51 @@ export default function ProfileScreen() {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.preferenceCard}>
+          <View style={styles.preferenceCard}>
             <View style={styles.preferenceLeft}>
               <IconSymbol 
-                ios_icon_name="lock.fill" 
-                android_material_icon_name="lock" 
+                ios_icon_name="chart.bar.fill" 
+                android_material_icon_name="analytics" 
                 size={20} 
-                color={colors.accent} 
+                color={colors.highlight} 
               />
-              <Text style={styles.preferenceText}>Privacy & Security</Text>
+              <Text style={styles.preferenceText}>Analytics</Text>
+            </View>
+            <Switch
+              value={isAnalyticsEnabled}
+              onValueChange={setIsAnalyticsEnabled}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={isAnalyticsEnabled ? colors.primaryLight : colors.textSecondary}
+            />
+          </View>
+
+          <View style={styles.preferenceCard}>
+            <View style={styles.preferenceLeft}>
+              <IconSymbol 
+                ios_icon_name="square.and.arrow.up.fill" 
+                android_material_icon_name="share" 
+                size={20} 
+                color={colors.success} 
+              />
+              <Text style={styles.preferenceText}>Data Sharing</Text>
+            </View>
+            <Switch
+              value={isDataSharingEnabled}
+              onValueChange={setIsDataSharingEnabled}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={isDataSharingEnabled ? colors.primaryLight : colors.textSecondary}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.preferenceCard} onPress={handleClearData}>
+            <View style={styles.preferenceLeft}>
+              <IconSymbol 
+                ios_icon_name="trash.fill" 
+                android_material_icon_name="delete" 
+                size={20} 
+                color={colors.error} 
+              />
+              <Text style={[styles.preferenceText, { color: colors.error }]}>Clear App Data</Text>
             </View>
             <IconSymbol 
               ios_icon_name="chevron.right" 
@@ -270,18 +219,39 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {isEditing && (
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <LinearGradient
-              colors={[colors.gradient1, colors.gradient2]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.saveButtonGradient}
-            >
-              <Text style={styles.saveButtonText}>Save Changes</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        )}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About</Text>
+          
+          <View style={styles.infoCard}>
+            <View style={styles.infoRow}>
+              <IconSymbol 
+                ios_icon_name="info.circle.fill" 
+                android_material_icon_name="info" 
+                size={20} 
+                color={colors.primary} 
+              />
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Version</Text>
+                <Text style={styles.infoText}>1.0.0</Text>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.infoRow}>
+              <IconSymbol 
+                ios_icon_name="hammer.fill" 
+                android_material_icon_name="build" 
+                size={20} 
+                color={colors.secondary} 
+              />
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Build</Text>
+                <Text style={styles.infoText}>2024.01.001</Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -349,20 +319,6 @@ const styles = StyleSheet.create({
     color: colors.text,
     opacity: 0.8,
     marginBottom: 16,
-  },
-  editButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    gap: 8,
-  },
-  editButtonText: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: '600',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -439,17 +395,6 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '500',
   },
-  input: {
-    fontSize: 16,
-    color: colors.text,
-    fontWeight: '500',
-    backgroundColor: colors.backgroundLight,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
   divider: {
     height: 1,
     backgroundColor: colors.border,
@@ -475,22 +420,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
     fontWeight: '500',
-  },
-  saveButton: {
-    marginHorizontal: 16,
-    marginTop: 24,
-    borderRadius: 12,
-    overflow: 'hidden',
-    boxShadow: '0px 4px 12px rgba(124, 58, 237, 0.3)',
-    elevation: 4,
-  },
-  saveButtonGradient: {
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: '700',
   },
 });
