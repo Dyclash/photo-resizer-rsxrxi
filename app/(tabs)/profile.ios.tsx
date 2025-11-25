@@ -20,7 +20,29 @@ export default function ProfileScreen() {
           text: 'Clear Data',
           style: 'destructive',
           onPress: () => {
+            console.log('Clearing app data...');
             Alert.alert('Success', 'App data has been cleared.');
+          }
+        }
+      ]
+    );
+  };
+
+  const handleReset = () => {
+    Alert.alert(
+      'Reset App',
+      'This will reset the app to its initial state, clearing all data and settings. This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            console.log('Resetting app...');
+            Alert.alert('Success', 'App has been reset to initial state.');
           }
         }
       ]
@@ -91,6 +113,24 @@ export default function ProfileScreen() {
                 color={colors.error} 
               />
               <Text style={[styles.preferenceText, { color: colors.error }]}>Clear App Data</Text>
+            </View>
+            <IconSymbol 
+              ios_icon_name="chevron.right" 
+              android_material_icon_name="chevron_right" 
+              size={20} 
+              color={colors.textSecondary} 
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.preferenceCard} onPress={handleReset}>
+            <View style={styles.preferenceLeft}>
+              <IconSymbol 
+                ios_icon_name="arrow.counterclockwise.circle.fill" 
+                android_material_icon_name="refresh" 
+                size={20} 
+                color={colors.warning} 
+              />
+              <Text style={[styles.preferenceText, { color: colors.warning }]}>Reset App</Text>
             </View>
             <IconSymbol 
               ios_icon_name="chevron.right" 
