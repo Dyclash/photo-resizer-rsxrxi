@@ -11,8 +11,6 @@ import * as SystemUI from "expo-system-ui";
 export default function ProfileScreen() {
   const systemColorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
-  const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
-  const [isDataSharingEnabled, setIsDataSharingEnabled] = useState(false);
 
   const handleDarkModeToggle = async (value: boolean) => {
     setIsDarkMode(value);
@@ -27,26 +25,6 @@ export default function ProfileScreen() {
     } catch (error) {
       console.log('Error updating system UI:', error);
     }
-  };
-
-  const handlePrivacySettings = () => {
-    Alert.alert(
-      'Privacy & Security',
-      'Your data is stored locally on your device. We do not collect or share any personal information without your explicit consent.',
-      [
-        {
-          text: 'Learn More',
-          onPress: () => {
-            Alert.alert(
-              'Data Privacy',
-              '• All photos are processed locally on your device\n• No data is sent to external servers\n• Your app descriptions and generated content are stored locally\n• You have full control over your data',
-              [{ text: 'OK' }]
-            );
-          }
-        },
-        { text: 'OK' }
-      ]
-    );
   };
 
   const handleClearData = () => {
@@ -144,62 +122,8 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Privacy & Security</Text>
+          <Text style={styles.sectionTitle}>Data Management</Text>
           
-          <TouchableOpacity style={styles.preferenceCard} onPress={handlePrivacySettings}>
-            <View style={styles.preferenceLeft}>
-              <IconSymbol 
-                ios_icon_name="lock.fill" 
-                android_material_icon_name="lock" 
-                size={20} 
-                color={colors.accent} 
-              />
-              <Text style={styles.preferenceText}>Privacy Policy</Text>
-            </View>
-            <IconSymbol 
-              ios_icon_name="chevron.right" 
-              android_material_icon_name="chevron_right" 
-              size={20} 
-              color={colors.textSecondary} 
-            />
-          </TouchableOpacity>
-
-          <View style={styles.preferenceCard}>
-            <View style={styles.preferenceLeft}>
-              <IconSymbol 
-                ios_icon_name="chart.bar.fill" 
-                android_material_icon_name="analytics" 
-                size={20} 
-                color={colors.highlight} 
-              />
-              <Text style={styles.preferenceText}>Analytics</Text>
-            </View>
-            <Switch
-              value={isAnalyticsEnabled}
-              onValueChange={setIsAnalyticsEnabled}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={isAnalyticsEnabled ? colors.primaryLight : colors.textSecondary}
-            />
-          </View>
-
-          <View style={styles.preferenceCard}>
-            <View style={styles.preferenceLeft}>
-              <IconSymbol 
-                ios_icon_name="square.and.arrow.up.fill" 
-                android_material_icon_name="share" 
-                size={20} 
-                color={colors.success} 
-              />
-              <Text style={styles.preferenceText}>Data Sharing</Text>
-            </View>
-            <Switch
-              value={isDataSharingEnabled}
-              onValueChange={setIsDataSharingEnabled}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={isDataSharingEnabled ? colors.primaryLight : colors.textSecondary}
-            />
-          </View>
-
           <TouchableOpacity style={styles.preferenceCard} onPress={handleClearData}>
             <View style={styles.preferenceLeft}>
               <IconSymbol 
