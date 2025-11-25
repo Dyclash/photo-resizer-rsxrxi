@@ -19,7 +19,7 @@ export interface ResizedPhoto {
 export interface AppMetadata {
   promotionalText: string;
   description: string;
-  keywords: string;
+  keywords: string[];
 }
 
 export const APP_STORE_SPECS = [
