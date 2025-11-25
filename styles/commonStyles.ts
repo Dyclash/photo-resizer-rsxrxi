@@ -1,32 +1,7 @@
 
-import { StyleSheet, ViewStyle, TextStyle, useColorScheme } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-// Dark theme colors
-export const darkColors = {
-  background: '#0F0F1E',
-  backgroundLight: '#1A1A2E',
-  text: '#FFFFFF',
-  textSecondary: '#A0A0B8',
-  primary: '#7C3AED',
-  primaryLight: '#9F67FF',
-  primaryDark: '#5B21B6',
-  secondary: '#06B6D4',
-  secondaryLight: '#22D3EE',
-  accent: '#F59E0B',
-  accentLight: '#FCD34D',
-  card: '#1E1E3F',
-  cardLight: '#2A2A4E',
-  highlight: '#EC4899',
-  border: '#2D2D4A',
-  success: '#10B981',
-  error: '#EF4444',
-  warning: '#F59E0B',
-  gradient1: '#7C3AED',
-  gradient2: '#EC4899',
-};
-
-// Light theme colors
-export const lightColors = {
+export const colors = {
   background: '#F5F5F7',
   backgroundLight: '#FFFFFF',
   text: '#1D1D1F',
@@ -47,15 +22,6 @@ export const lightColors = {
   warning: '#F59E0B',
   gradient1: '#7C3AED',
   gradient2: '#EC4899',
-};
-
-// Default to dark colors for backward compatibility
-export const colors = darkColors;
-
-// Hook to get theme-aware colors
-export const useThemeColors = () => {
-  const colorScheme = useColorScheme();
-  return colorScheme === 'dark' ? darkColors : lightColors;
 };
 
 export const buttonStyles = StyleSheet.create({

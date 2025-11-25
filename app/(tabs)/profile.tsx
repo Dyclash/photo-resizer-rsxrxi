@@ -1,32 +1,12 @@
 
-import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity, Switch, Alert } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, ScrollView, Platform, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
-import { useColorScheme } from "react-native";
-import * as SystemUI from "expo-system-ui";
 
 export default function ProfileScreen() {
-  const systemColorScheme = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
-
-  const handleDarkModeToggle = async (value: boolean) => {
-    setIsDarkMode(value);
-    try {
-      // Update system UI background color based on theme
-      await SystemUI.setBackgroundColorAsync(value ? '#0F0F1E' : '#FFFFFF');
-      Alert.alert(
-        'Theme Changed',
-        `${value ? 'Dark' : 'Light'} mode activated. Please restart the app for full effect.`,
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
-      console.log('Error updating system UI:', error);
-    }
-  };
-
   const handleClearData = () => {
     Alert.alert(
       'Clear App Data',
@@ -100,28 +80,6 @@ export default function ProfileScreen() {
               <Text style={styles.statLabel}>{stat.label}</Text>
             </View>
           ))}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Appearance</Text>
-          
-          <View style={styles.preferenceCard}>
-            <View style={styles.preferenceLeft}>
-              <IconSymbol 
-                ios_icon_name="moon.fill" 
-                android_material_icon_name="dark_mode" 
-                size={20} 
-                color={colors.secondary} 
-              />
-              <Text style={styles.preferenceText}>Dark Mode</Text>
-            </View>
-            <Switch
-              value={isDarkMode}
-              onValueChange={handleDarkModeToggle}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={isDarkMode ? colors.primaryLight : colors.textSecondary}
-            />
-          </View>
         </View>
 
         <View style={styles.section}>
