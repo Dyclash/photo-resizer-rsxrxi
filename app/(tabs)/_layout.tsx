@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Stack } from 'expo-router';
 import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
@@ -10,6 +11,18 @@ export default function TabLayout() {
       route: '/(tabs)/(home)/',
       icon: 'home',
       label: 'Home',
+    },
+    {
+      name: 'ios-console',
+      route: '/(tabs)/ios-console',
+      icon: 'apple',
+      label: 'iOS',
+    },
+    {
+      name: 'android-console',
+      route: '/(tabs)/android-console',
+      icon: 'android',
+      label: 'Android',
     },
     {
       name: 'profile',
@@ -29,6 +42,8 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen key="home" name="(home)" />
+        <Stack.Screen key="ios-console" name="ios-console" />
+        <Stack.Screen key="android-console" name="android-console" />
         <Stack.Screen key="profile" name="profile" />
       </Stack>
       <FloatingTabBar tabs={tabs} />

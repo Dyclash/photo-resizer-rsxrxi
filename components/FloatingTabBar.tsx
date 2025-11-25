@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   View,
@@ -26,7 +27,7 @@ const { width: screenWidth } = Dimensions.get('window');
 export interface TabBarItem {
   name: string;
   route: Href;
-  icon: keyof typeof MaterialIcons.glyphMap;
+  icon: keyof typeof MaterialIcons.glyphMap | 'apple' | 'android';
   label: string;
 }
 
@@ -36,6 +37,15 @@ interface FloatingTabBarProps {
   borderRadius?: number;
   bottomMargin?: number;
 }
+
+// Map special icons to MaterialIcons equivalents
+const getIconName = (icon: string): keyof typeof MaterialIcons.glyphMap => {
+  const iconMap: Record<string, keyof typeof MaterialIcons.glyphMap> = {
+    'apple': 'phone-iphone',
+    'android': 'android',
+  };
+  return (iconMap[icon] || icon) as keyof typeof MaterialIcons.glyphMap;
+};
 
 export default function FloatingTabBar({
   tabs,
@@ -172,18 +182,18 @@ export default function FloatingTabBar({
           <View style={styles.tabsContainer}>
             {tabs.map((tab, index) => {
               const isActive = activeTabIndex === index;
+              const iconName = getIconName(tab.icon);
 
               return (
                 <React.Fragment key={index}>
                 <TouchableOpacity
-                  key={index} // Use index as key
                   style={styles.tab}
                   onPress={() => handleTabPress(tab.route)}
                   activeOpacity={0.7}
                 >
-                  <View key={index} style={styles.tabContent}>
+                  <View style={styles.tabContent}>
                     <IconSymbol
-                      android_material_icon_name={tab.icon}
+                      android_material_icon_name={iconName}
                       ios_icon_name={tab.icon}
                       size={24}
                       color={isActive ? theme.colors.primary : (theme.dark ? '#98989D' : '#000000')}
