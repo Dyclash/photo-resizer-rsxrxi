@@ -1,16 +1,35 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/IconSymbol";
 import { colors } from "@/styles/commonStyles";
+import { storage, AppStats } from "@/utils/storage";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
+  const router = useRouter();
+  const [stats, setStats] = useState<AppStats>({ photosResized: 0, appsPublished: 0, downloads: 0 });
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      const loadedStats = await storage.getStats();
+      setStats(loadedStats);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
   const handleClearData = () => {
     Alert.alert(
       'Clear App Data',
-      'This will remove all your saved photos, descriptions, and generated content. This action cannot be undone.',
+      'This will remove all your saved photos, descriptions, and generated content. Your statistics will be preserved. This action cannot be undone.',
       [
         {
           text: 'Cancel',
@@ -19,9 +38,33 @@ export default function ProfileScreen() {
         {
           text: 'Clear Data',
           style: 'destructive',
-          onPress: () => {
-            console.log('Clearing app data...');
-            Alert.alert('Success', 'App data has been cleared.');
+          onPress: async () => {
+            setIsLoading(true);
+            try {
+              const success = await storage.clearAllData();
+              if (success) {
+                console.log('App data cleared successfully');
+                Alert.alert(
+                  'Success',
+                  'App data has been cleared. Your photos and content have been removed.',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        console.log('User acknowledged data clear');
+                      }
+                    }
+                  ]
+                );
+              } else {
+                Alert.alert('Error', 'Failed to clear app data. Please try again.');
+              }
+            } catch (error) {
+              console.error('Error clearing data:', error);
+              Alert.alert('Error', 'An error occurred while clearing data.');
+            } finally {
+              setIsLoading(false);
+            }
           }
         }
       ]
@@ -31,7 +74,7 @@ export default function ProfileScreen() {
   const handleReset = () => {
     Alert.alert(
       'Reset App',
-      'This will reset the app to its initial state, clearing all data and settings. This action cannot be undone.',
+      'This will reset the app to its initial state, clearing ALL data including statistics and settings. This action cannot be undone.',
       [
         {
           text: 'Cancel',
@@ -40,19 +83,44 @@ export default function ProfileScreen() {
         {
           text: 'Reset',
           style: 'destructive',
-          onPress: () => {
-            console.log('Resetting app...');
-            Alert.alert('Success', 'App has been reset to initial state.');
+          onPress: async () => {
+            setIsLoading(true);
+            try {
+              const success = await storage.resetApp();
+              if (success) {
+                console.log('App reset successfully');
+                setStats({ photosResized: 0, appsPublished: 0, downloads: 0 });
+                Alert.alert(
+                  'Success',
+                  'App has been reset to initial state. All data has been cleared.',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        console.log('User acknowledged app reset');
+                      }
+                    }
+                  ]
+                );
+              } else {
+                Alert.alert('Error', 'Failed to reset app. Please try again.');
+              }
+            } catch (error) {
+              console.error('Error resetting app:', error);
+              Alert.alert('Error', 'An error occurred while resetting the app.');
+            } finally {
+              setIsLoading(false);
+            }
           }
         }
       ]
     );
   };
 
-  const stats = [
-    { label: 'Photos Resized', value: '127', icon: 'photo.fill', androidIcon: 'image' },
-    { label: 'Apps Published', value: '8', icon: 'app.badge', androidIcon: 'apps' },
-    { label: 'Downloads', value: '2.4K', icon: 'arrow.down.circle', androidIcon: 'download' },
+  const statsData = [
+    { label: 'Photos Resized', value: stats.photosResized.toString(), icon: 'photo.fill', androidIcon: 'image' },
+    { label: 'Apps Published', value: stats.appsPublished.toString(), icon: 'app.badge', androidIcon: 'apps' },
+    { label: 'Downloads', value: stats.downloads > 0 ? `${(stats.downloads / 1000).toFixed(1)}K` : '0', icon: 'arrow.down.circle', androidIcon: 'download' },
   ];
 
   return (
@@ -85,7 +153,7 @@ export default function ProfileScreen() {
         </LinearGradient>
 
         <View style={styles.statsContainer}>
-          {stats.map((stat, index) => (
+          {statsData.map((stat, index) => (
             <View key={index} style={styles.statCard}>
               <View style={styles.statIconContainer}>
                 <IconSymbol
@@ -104,7 +172,11 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Data Management</Text>
           
-          <TouchableOpacity style={styles.preferenceCard} onPress={handleClearData}>
+          <TouchableOpacity 
+            style={[styles.preferenceCard, isLoading && styles.disabledCard]} 
+            onPress={handleClearData}
+            disabled={isLoading}
+          >
             <View style={styles.preferenceLeft}>
               <IconSymbol 
                 ios_icon_name="trash.fill" 
@@ -112,7 +184,10 @@ export default function ProfileScreen() {
                 size={20} 
                 color={colors.error} 
               />
-              <Text style={[styles.preferenceText, { color: colors.error }]}>Clear App Data</Text>
+              <View style={styles.preferenceTextContainer}>
+                <Text style={[styles.preferenceText, { color: colors.error }]}>Clear App Data</Text>
+                <Text style={styles.preferenceSubtext}>Remove photos and content</Text>
+              </View>
             </View>
             <IconSymbol 
               ios_icon_name="chevron.right" 
@@ -122,7 +197,11 @@ export default function ProfileScreen() {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.preferenceCard} onPress={handleReset}>
+          <TouchableOpacity 
+            style={[styles.preferenceCard, isLoading && styles.disabledCard]} 
+            onPress={handleReset}
+            disabled={isLoading}
+          >
             <View style={styles.preferenceLeft}>
               <IconSymbol 
                 ios_icon_name="arrow.counterclockwise.circle.fill" 
@@ -130,7 +209,10 @@ export default function ProfileScreen() {
                 size={20} 
                 color={colors.warning} 
               />
-              <Text style={[styles.preferenceText, { color: colors.warning }]}>Reset App</Text>
+              <View style={styles.preferenceTextContainer}>
+                <Text style={[styles.preferenceText, { color: colors.warning }]}>Reset App</Text>
+                <Text style={styles.preferenceSubtext}>Clear all data and statistics</Text>
+              </View>
             </View>
             <IconSymbol 
               ios_icon_name="chevron.right" 
@@ -333,14 +415,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  disabledCard: {
+    opacity: 0.5,
+  },
   preferenceLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    flex: 1,
+  },
+  preferenceTextContainer: {
+    flex: 1,
   },
   preferenceText: {
     fontSize: 16,
     color: colors.text,
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+  preferenceSubtext: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
   },
 });
