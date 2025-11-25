@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/styles/commonStyles';
 import { usePhotoResizer } from '@/hooks/usePhotoResizer';
 import { PhotoGrid } from '@/components/PhotoGrid';
@@ -56,12 +57,19 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <IconSymbol
-            ios_icon_name="photo.stack"
-            android_material_icon_name="collections"
-            size={48}
-            color={colors.primary}
-          />
+          <LinearGradient
+            colors={[colors.gradient1, colors.gradient2]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.iconGradient}
+          >
+            <IconSymbol
+              ios_icon_name="photo.stack"
+              android_material_icon_name="collections"
+              size={32}
+              color={colors.text}
+            />
+          </LinearGradient>
           <Text style={styles.title}>iOS App Store Photo Resizer</Text>
           <Text style={styles.subtitle}>
             Upload photos, resize to App Store specs, and generate promotional content
@@ -71,16 +79,23 @@ export default function HomeScreen() {
         {currentStep === 'upload' && (
           <View style={styles.section}>
             <TouchableOpacity style={styles.uploadButton} onPress={handlePickImages}>
-              <IconSymbol
-                ios_icon_name="photo.badge.plus"
-                android_material_icon_name="add_photo_alternate"
-                size={32}
-                color={colors.card}
-              />
-              <Text style={styles.uploadButtonText}>
-                {photos.length > 0 ? 'Add More Photos' : 'Upload Photos'}
-              </Text>
-              <Text style={styles.uploadButtonSubtext}>Up to 12 photos</Text>
+              <LinearGradient
+                colors={[colors.gradient1, colors.gradient2]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.uploadButtonGradient}
+              >
+                <IconSymbol
+                  ios_icon_name="photo.badge.plus"
+                  android_material_icon_name="add_photo_alternate"
+                  size={32}
+                  color={colors.text}
+                />
+                <Text style={styles.uploadButtonText}>
+                  {photos.length > 0 ? 'Add More Photos' : 'Upload Photos'}
+                </Text>
+                <Text style={styles.uploadButtonSubtext}>Up to 12 photos</Text>
+              </LinearGradient>
             </TouchableOpacity>
 
             <PhotoGrid photos={photos} onRemove={removePhoto} />
@@ -88,9 +103,16 @@ export default function HomeScreen() {
             {photos.length > 0 && (
               <View style={styles.actionButtons}>
                 <TouchableOpacity style={styles.primaryButton} onPress={handleResize}>
-                  <Text style={styles.primaryButtonText}>
-                    Resize to App Store Specs
-                  </Text>
+                  <LinearGradient
+                    colors={[colors.secondary, colors.secondaryLight]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.buttonGradient}
+                  >
+                    <Text style={styles.primaryButtonText}>
+                      Resize to App Store Specs
+                    </Text>
+                  </LinearGradient>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.secondaryButton} onPress={handleReset}>
@@ -100,7 +122,15 @@ export default function HomeScreen() {
             )}
 
             <View style={styles.infoCard}>
-              <Text style={styles.infoTitle}>App Store Specifications</Text>
+              <View style={styles.infoHeader}>
+                <IconSymbol
+                  ios_icon_name="info.circle.fill"
+                  android_material_icon_name="info"
+                  size={20}
+                  color={colors.primary}
+                />
+                <Text style={styles.infoTitle}>App Store Specifications</Text>
+              </View>
               <Text style={styles.infoText}>- 1242 × 2688px (6.5" Portrait)</Text>
               <Text style={styles.infoText}>- 2688 × 1242px (6.5" Landscape)</Text>
               <Text style={styles.infoText}>- 1284 × 2778px (6.7" Portrait)</Text>
@@ -119,15 +149,22 @@ export default function HomeScreen() {
         {currentStep === 'describe' && resizedPhotos.length > 0 && (
           <View style={styles.section}>
             <View style={styles.successBanner}>
-              <IconSymbol
-                ios_icon_name="checkmark.circle.fill"
-                android_material_icon_name="check_circle"
-                size={24}
-                color={colors.success}
-              />
-              <Text style={styles.successText}>
-                Successfully resized {photos.length} photo(s) to {resizedPhotos.length} variants!
-              </Text>
+              <LinearGradient
+                colors={[colors.success, '#059669']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.successGradient}
+              >
+                <IconSymbol
+                  ios_icon_name="checkmark.circle.fill"
+                  android_material_icon_name="check_circle"
+                  size={24}
+                  color={colors.text}
+                />
+                <Text style={styles.successText}>
+                  Successfully resized {photos.length} photo(s) to {resizedPhotos.length} variants!
+                </Text>
+              </LinearGradient>
             </View>
 
             <ResizedPhotosList photos={resizedPhotos} />
@@ -139,7 +176,7 @@ export default function HomeScreen() {
                 ios_icon_name="arrow.counterclockwise"
                 android_material_icon_name="refresh"
                 size={20}
-                color={colors.card}
+                color={colors.text}
               />
               <Text style={styles.resetButtonText}>Start Over</Text>
             </TouchableOpacity>
@@ -165,14 +202,23 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     paddingHorizontal: 24,
-    marginBottom: 24,
+    marginBottom: 32,
+  },
+  iconGradient: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    boxShadow: '0px 8px 24px rgba(124, 58, 237, 0.4)',
+    elevation: 8,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '800',
     color: colors.text,
     textAlign: 'center',
-    marginTop: 16,
     marginBottom: 8,
   },
   subtitle: {
@@ -185,23 +231,25 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   uploadButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    padding: 24,
-    alignItems: 'center',
     marginHorizontal: 16,
     marginBottom: 16,
-    boxShadow: '0px 4px 8px rgba(98, 0, 238, 0.2)',
-    elevation: 4,
+    borderRadius: 16,
+    overflow: 'hidden',
+    boxShadow: '0px 8px 24px rgba(124, 58, 237, 0.4)',
+    elevation: 8,
+  },
+  uploadButtonGradient: {
+    padding: 32,
+    alignItems: 'center',
   },
   uploadButtonText: {
-    color: colors.card,
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
     marginTop: 12,
   },
   uploadButtonSubtext: {
-    color: colors.card,
+    color: colors.text,
     fontSize: 12,
     marginTop: 4,
     opacity: 0.8,
@@ -212,13 +260,17 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   primaryButton: {
-    backgroundColor: colors.secondary,
-    borderRadius: 8,
+    borderRadius: 12,
+    overflow: 'hidden',
+    boxShadow: '0px 4px 12px rgba(6, 182, 212, 0.3)',
+    elevation: 4,
+  },
+  buttonGradient: {
     padding: 16,
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: colors.card,
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -226,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
     alignItems: 'center',
   },
@@ -237,22 +289,29 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     backgroundColor: colors.card,
-    borderRadius: 8,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
     marginHorizontal: 16,
     marginTop: 24,
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
+    elevation: 4,
+  },
+  infoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
   },
   infoTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary,
-    marginBottom: 12,
+    color: colors.text,
   },
   infoText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textSecondary,
     marginBottom: 6,
     lineHeight: 20,
   },
@@ -267,38 +326,41 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   successBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.card,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.success,
-    borderRadius: 8,
-    padding: 16,
     marginHorizontal: 16,
     marginBottom: 16,
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    borderRadius: 12,
+    overflow: 'hidden',
+    boxShadow: '0px 4px 12px rgba(16, 185, 129, 0.3)',
+    elevation: 4,
+  },
+  successGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 12,
   },
   successText: {
     flex: 1,
     fontSize: 14,
     color: colors.text,
-    marginLeft: 12,
     lineHeight: 20,
+    fontWeight: '600',
   },
   resetButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.textSecondary,
-    borderRadius: 8,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginTop: 24,
     gap: 8,
   },
   resetButtonText: {
-    color: colors.card,
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },

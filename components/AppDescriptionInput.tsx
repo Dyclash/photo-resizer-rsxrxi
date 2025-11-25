@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../styles/commonStyles';
 import { generateAppMetadata } from '../utils/textGenerator';
 import { AppMetadata } from '../types/PhotoTypes';
@@ -38,7 +39,15 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Describe Your App</Text>
+      <View style={styles.headerRow}>
+        <IconSymbol
+          ios_icon_name="text.bubble.fill"
+          android_material_icon_name="description"
+          size={24}
+          color={colors.primary}
+        />
+        <Text style={styles.title}>Describe Your App</Text>
+      </View>
       <Text style={styles.subtitle}>
         Tell us about your app to generate promotional content
       </Text>
@@ -55,18 +64,39 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
       />
 
       <TouchableOpacity
-        style={[styles.button, description.trim().length < 10 && styles.buttonDisabled]}
+        style={styles.button}
         onPress={handleGenerate}
         disabled={description.trim().length < 10}
       >
-        <Text style={styles.buttonText}>Generate Content</Text>
+        <LinearGradient
+          colors={description.trim().length < 10 ? [colors.border, colors.border] : [colors.gradient1, colors.gradient2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.buttonGradient}
+        >
+          <IconSymbol
+            ios_icon_name="sparkles"
+            android_material_icon_name="auto_awesome"
+            size={20}
+            color={colors.text}
+          />
+          <Text style={styles.buttonText}>Generate Content</Text>
+        </LinearGradient>
       </TouchableOpacity>
 
       {metadata && (
         <ScrollView style={styles.resultsContainer}>
           <View style={styles.resultCard}>
             <View style={styles.resultHeader}>
-              <Text style={styles.resultTitle}>Promotional Text</Text>
+              <View style={styles.resultTitleRow}>
+                <IconSymbol
+                  ios_icon_name="megaphone.fill"
+                  android_material_icon_name="campaign"
+                  size={18}
+                  color={colors.primary}
+                />
+                <Text style={styles.resultTitle}>Promotional Text</Text>
+              </View>
               <TouchableOpacity
                 style={styles.copyButton}
                 onPress={() => copyToClipboard(metadata.promotionalText, 'Promotional Text')}
@@ -74,8 +104,8 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
                 <IconSymbol
                   ios_icon_name="doc.on.doc"
                   android_material_icon_name="content_copy"
-                  size={20}
-                  color={colors.primary}
+                  size={18}
+                  color={colors.secondary}
                 />
               </TouchableOpacity>
             </View>
@@ -84,7 +114,15 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
 
           <View style={styles.resultCard}>
             <View style={styles.resultHeader}>
-              <Text style={styles.resultTitle}>Description</Text>
+              <View style={styles.resultTitleRow}>
+                <IconSymbol
+                  ios_icon_name="doc.text.fill"
+                  android_material_icon_name="description"
+                  size={18}
+                  color={colors.secondary}
+                />
+                <Text style={styles.resultTitle}>Description</Text>
+              </View>
               <TouchableOpacity
                 style={styles.copyButton}
                 onPress={() => copyToClipboard(metadata.description, 'Description')}
@@ -92,8 +130,8 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
                 <IconSymbol
                   ios_icon_name="doc.on.doc"
                   android_material_icon_name="content_copy"
-                  size={20}
-                  color={colors.primary}
+                  size={18}
+                  color={colors.secondary}
                 />
               </TouchableOpacity>
             </View>
@@ -102,7 +140,15 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
 
           <View style={styles.resultCard}>
             <View style={styles.resultHeader}>
-              <Text style={styles.resultTitle}>Keywords (10)</Text>
+              <View style={styles.resultTitleRow}>
+                <IconSymbol
+                  ios_icon_name="tag.fill"
+                  android_material_icon_name="label"
+                  size={18}
+                  color={colors.accent}
+                />
+                <Text style={styles.resultTitle}>Keywords (10)</Text>
+              </View>
               <TouchableOpacity
                 style={styles.copyButton}
                 onPress={() => copyToClipboard(metadata.keywords.join(', '), 'Keywords')}
@@ -110,16 +156,22 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
                 <IconSymbol
                   ios_icon_name="doc.on.doc"
                   android_material_icon_name="content_copy"
-                  size={20}
-                  color={colors.primary}
+                  size={18}
+                  color={colors.secondary}
                 />
               </TouchableOpacity>
             </View>
             <View style={styles.keywordsContainer}>
               {metadata.keywords.map((keyword, index) => (
-                <View key={index} style={styles.keywordChip}>
+                <LinearGradient
+                  key={index}
+                  colors={[colors.gradient1, colors.gradient2]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.keywordChip}
+                >
                   <Text style={styles.keywordText}>{keyword}</Text>
-                </View>
+                </LinearGradient>
               ))}
             </View>
           </View>
@@ -135,11 +187,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 24,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
   title: {
     fontSize: 20,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
@@ -150,25 +207,28 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 12,
+    padding: 16,
     fontSize: 16,
     color: colors.text,
-    minHeight: 100,
+    minHeight: 120,
     marginBottom: 16,
   },
   button: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
+    borderRadius: 12,
+    overflow: 'hidden',
+    boxShadow: '0px 4px 12px rgba(124, 58, 237, 0.3)',
+    elevation: 4,
   },
-  buttonDisabled: {
-    backgroundColor: colors.textSecondary,
-    opacity: 0.5,
+  buttonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    gap: 8,
   },
   buttonText: {
-    color: colors.card,
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -178,11 +238,13 @@ const styles = StyleSheet.create({
   },
   resultCard: {
     backgroundColor: colors.card,
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
+    elevation: 4,
   },
   resultHeader: {
     flexDirection: 'row',
@@ -190,19 +252,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  resultTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   resultTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.text,
   },
   copyButton: {
     padding: 8,
-    borderRadius: 6,
-    backgroundColor: colors.background,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundLight,
   },
   resultText: {
     fontSize: 14,
-    color: colors.text,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   keywordsContainer: {
@@ -211,14 +278,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   keywordChip: {
-    backgroundColor: colors.primary,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 16,
   },
   keywordText: {
     fontSize: 13,
-    color: colors.card,
+    color: colors.text,
     fontWeight: '600',
   },
 });
