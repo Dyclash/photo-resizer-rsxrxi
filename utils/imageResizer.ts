@@ -8,6 +8,7 @@ export async function resizeImageToSpec(
   targetHeight: number
 ): Promise<string> {
   try {
+    // App Store screenshots should be PNG format for best quality
     const result = await ImageManipulator.manipulateAsync(
       imageUri,
       [{ resize: { width: targetWidth, height: targetHeight } }],

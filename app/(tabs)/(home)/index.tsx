@@ -131,10 +131,19 @@ export default function HomeScreen() {
                 />
                 <Text style={styles.infoTitle}>App Store Specifications</Text>
               </View>
-              <Text style={styles.infoText}>- 1242 × 2688px (6.5" Portrait)</Text>
-              <Text style={styles.infoText}>- 2688 × 1242px (6.5" Landscape)</Text>
-              <Text style={styles.infoText}>- 1284 × 2778px (6.7" Portrait)</Text>
-              <Text style={styles.infoText}>- 2778 × 1284px (6.7" Landscape)</Text>
+              <Text style={styles.infoText}>• 1242 × 2688 pixels (6.5&quot; Portrait)</Text>
+              <Text style={styles.infoText}>• 2688 × 1242 pixels (6.5&quot; Landscape)</Text>
+              <Text style={styles.infoText}>• 1284 × 2778 pixels (6.7&quot; Portrait)</Text>
+              <Text style={styles.infoText}>• 2778 × 1284 pixels (6.7&quot; Landscape)</Text>
+              <View style={styles.formatInfo}>
+                <IconSymbol
+                  ios_icon_name="doc.fill"
+                  android_material_icon_name="description"
+                  size={16}
+                  color={colors.secondary}
+                />
+                <Text style={styles.formatText}>Format: PNG (highest quality)</Text>
+              </View>
             </View>
           </View>
         )}
@@ -314,6 +323,20 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: 6,
     lineHeight: 20,
+  },
+  formatInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  formatText: {
+    fontSize: 13,
+    color: colors.secondary,
+    fontWeight: '600',
   },
   loadingContainer: {
     alignItems: 'center',

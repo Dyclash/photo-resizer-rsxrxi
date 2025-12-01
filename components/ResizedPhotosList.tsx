@@ -29,7 +29,7 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
       if (Platform.OS === 'web') {
         const link = document.createElement('a');
         link.href = photo.uri;
-        link.download = `resized-${photo.specification.replace(/[^a-z0-9]/gi, '-')}.jpg`;
+        link.download = `resized-${photo.specification.replace(/[^a-z0-9]/gi, '-')}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -44,7 +44,7 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
         return;
       }
 
-      const fileUri = FileSystem.documentDirectory + `resized-${Date.now()}.jpg`;
+      const fileUri = FileSystem.documentDirectory + `resized-${Date.now()}.png`;
       await FileSystem.copyAsync({
         from: photo.uri,
         to: fileUri,
@@ -72,7 +72,7 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
       }
 
       await Sharing.shareAsync(photo.uri, {
-        mimeType: 'image/jpeg',
+        mimeType: 'image/png',
         dialogTitle: 'Share resized image',
       });
     } catch (error) {
@@ -157,7 +157,7 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
                 <View style={styles.info}>
                   <Text style={styles.specLabel}>{photo.specification}</Text>
                   <Text style={styles.dimensions}>
-                    {photo.width} × {photo.height}px
+                    {photo.width} × {photo.height} pixels
                   </Text>
                 </View>
                 <View style={styles.actions}>
