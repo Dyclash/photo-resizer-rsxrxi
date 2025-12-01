@@ -6,6 +6,11 @@ import { Platform, Alert } from 'react-native';
 import { ResizedPhoto } from '../types/PhotoTypes';
 
 export async function exportPhotosAsZip(photos: ResizedPhoto[]): Promise<void> {
+  if (!photos || photos.length === 0) {
+    console.error('No photos to export');
+    throw new Error('No photos to export');
+  }
+
   try {
     console.log('Starting ZIP export for', photos.length, 'photos');
     
@@ -18,6 +23,12 @@ export async function exportPhotosAsZip(photos: ResizedPhoto[]): Promise<void> {
 
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i];
+      
+      if (!photo || !photo.uri) {
+        console.error(`Invalid photo at index ${i}:`, photo);
+        continue;
+      }
+
       console.log(`Processing photo ${i + 1}/${photos.length}: ${photo.specification}`);
       
       try {
@@ -25,7 +36,12 @@ export async function exportPhotosAsZip(photos: ResizedPhoto[]): Promise<void> {
           encoding: FileSystem.EncodingType.Base64,
         });
 
-        const fileName = `photo-${i + 1}-${photo.specification.replace(/[^a-z0-9]/gi, '-')}-${photo.width}x${photo.height}.jpg`;
+        if (!base64Data) {
+          console.error(`Failed to read photo ${i + 1}`);
+          continue;
+        }
+
+        const fileName = `photo-${i + 1}-${photo.specification.replace(/[^a-z0-9]/gi, '-')}-${photo.width}x${photo.height}.png`;
         folder.file(fileName, base64Data, { base64: true });
       } catch (error) {
         console.error(`Error processing photo ${i + 1}:`, error);
@@ -38,6 +54,10 @@ export async function exportPhotosAsZip(photos: ResizedPhoto[]): Promise<void> {
       compression: 'DEFLATE',
       compressionOptions: { level: 6 }
     });
+
+    if (!zipContent) {
+      throw new Error('Failed to generate ZIP content');
+    }
 
     const zipFileName = `app-store-photos-${Date.now()}.zip`;
     const zipFilePath = FileSystem.documentDirectory + zipFileName;

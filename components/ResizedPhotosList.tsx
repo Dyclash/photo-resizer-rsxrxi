@@ -18,11 +18,16 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
   const [savingPhotoId, setSavingPhotoId] = useState<string | null>(null);
   const [isExportingZip, setIsExportingZip] = useState(false);
 
-  if (photos.length === 0) {
+  if (!photos || photos.length === 0) {
     return null;
   }
 
   const saveImage = async (photo: ResizedPhoto) => {
+    if (!photo || !photo.uri) {
+      Alert.alert('Error', 'Invalid photo');
+      return;
+    }
+
     try {
       setSavingPhotoId(photo.id);
 
@@ -51,7 +56,13 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
       });
 
       const asset = await MediaLibrary.createAssetAsync(fileUri);
-      await MediaLibrary.createAlbumAsync('App Store Photos', asset, false);
+      
+      try {
+        await MediaLibrary.createAlbumAsync('App Store Photos', asset, false);
+      } catch (albumError) {
+        console.log('Album creation note:', albumError);
+        // Album might already exist, which is fine
+      }
 
       Alert.alert('Success', 'Image saved to your photo library!');
     } catch (error) {
@@ -63,6 +74,11 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
   };
 
   const shareImage = async (photo: ResizedPhoto) => {
+    if (!photo || !photo.uri) {
+      Alert.alert('Error', 'Invalid photo');
+      return;
+    }
+
     try {
       const isAvailable = await Sharing.isAvailableAsync();
       
@@ -82,6 +98,11 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
   };
 
   const handleExportZip = async () => {
+    if (!photos || photos.length === 0) {
+      Alert.alert('Error', 'No photos to export');
+      return;
+    }
+
     try {
       setIsExportingZip(true);
       await exportPhotosAsZip(photos);
@@ -94,6 +115,10 @@ export function ResizedPhotosList({ photos }: ResizedPhotosListProps) {
   };
 
   const groupedPhotos = photos.reduce((acc, photo) => {
+    if (!photo || !photo.originalId) {
+      return acc;
+    }
+
     if (!acc[photo.originalId]) {
       acc[photo.originalId] = [];
     }

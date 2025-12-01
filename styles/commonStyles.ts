@@ -12,6 +12,9 @@ export const colors = {
   secondaryLight: '#22D3EE',
   secondaryDark: '#0891B2',
   
+  // Accent colors
+  accent: '#F59E0B',
+  
   // Gradient colors
   gradient1: '#7C3AED',
   gradient2: '#A78BFA',

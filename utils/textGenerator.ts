@@ -4,13 +4,24 @@ export function generateAppMetadata(description: string): {
   description: string;
   keywords: string[];
 } {
-  const words = description.toLowerCase().split(/\s+/).filter(word => word.length > 3);
+  if (!description || typeof description !== 'string') {
+    console.error('Invalid description provided');
+    throw new Error('Description is required');
+  }
+
+  const trimmedDescription = description.trim();
   
-  const promotionalText = description.length > 50 
-    ? `${description.substring(0, 170)}...`
-    : `Discover ${description}. Download now and experience the difference!`;
+  if (trimmedDescription.length === 0) {
+    throw new Error('Description cannot be empty');
+  }
+
+  const words = trimmedDescription.toLowerCase().split(/\s+/).filter(word => word.length > 3);
   
-  const enhancedDescription = `${description}\n\nKey Features:\n- User-friendly interface\n- Fast and reliable performance\n- Regular updates and improvements\n- Secure and private\n\nPerfect for anyone looking to enhance their mobile experience. Download today and see why users love this app!`;
+  const promotionalText = trimmedDescription.length > 50 
+    ? `${trimmedDescription.substring(0, 170)}...`
+    : `Discover ${trimmedDescription}. Download now and experience the difference!`;
+  
+  const enhancedDescription = `${trimmedDescription}\n\nKey Features:\n- User-friendly interface\n- Fast and reliable performance\n- Regular updates and improvements\n- Secure and private\n\nPerfect for anyone looking to enhance their mobile experience. Download today and see why users love this app!`;
   
   const commonWords = new Set(['the', 'and', 'for', 'with', 'this', 'that', 'from', 'have', 'your', 'will', 'can', 'app', 'mobile', 'their', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'under', 'again', 'further', 'then', 'once']);
   

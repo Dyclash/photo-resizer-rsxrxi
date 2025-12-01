@@ -15,19 +15,41 @@ interface AppDescriptionInputProps {
 export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
   const [description, setDescription] = useState('');
   const [metadata, setMetadata] = useState<AppMetadata | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleGenerate = () => {
-    if (description.trim().length < 10) {
-      console.log('Description too short');
+  const handleGenerate = async () => {
+    const trimmed = description.trim();
+    
+    if (trimmed.length < 10) {
+      Alert.alert('Description Too Short', 'Please provide at least 10 characters to generate content.');
       return;
     }
 
-    const generated = generateAppMetadata(description);
-    setMetadata(generated);
-    onGenerate(generated);
+    setIsGenerating(true);
+    
+    try {
+      const generated = generateAppMetadata(trimmed);
+      
+      if (!generated || !generated.promotionalText || !generated.description || !generated.keywords) {
+        throw new Error('Failed to generate metadata');
+      }
+
+      setMetadata(generated);
+      onGenerate(generated);
+    } catch (error) {
+      console.error('Error generating metadata:', error);
+      Alert.alert('Error', 'Failed to generate content. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const copyToClipboard = async (text: string, label: string) => {
+    if (!text) {
+      Alert.alert('Error', 'Nothing to copy');
+      return;
+    }
+
     try {
       await Clipboard.setStringAsync(text);
       Alert.alert('Copied!', `${label} copied to clipboard`);
@@ -61,15 +83,16 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
         multiline
         numberOfLines={4}
         textAlignVertical="top"
+        editable={!isGenerating}
       />
 
       <TouchableOpacity
         style={styles.button}
         onPress={handleGenerate}
-        disabled={description.trim().length < 10}
+        disabled={description.trim().length < 10 || isGenerating}
       >
         <LinearGradient
-          colors={description.trim().length < 10 ? [colors.border, colors.border] : [colors.gradient1, colors.gradient2]}
+          colors={description.trim().length < 10 || isGenerating ? [colors.border, colors.border] : [colors.gradient1, colors.gradient2]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.buttonGradient}
@@ -80,7 +103,9 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
             size={20}
             color={colors.text}
           />
-          <Text style={styles.buttonText}>Generate Content</Text>
+          <Text style={styles.buttonText}>
+            {isGenerating ? 'Generating...' : 'Generate Content'}
+          </Text>
         </LinearGradient>
       </TouchableOpacity>
 
@@ -147,7 +172,7 @@ export function AppDescriptionInput({ onGenerate }: AppDescriptionInputProps) {
                   size={18}
                   color={colors.accent}
                 />
-                <Text style={styles.resultTitle}>Keywords (10)</Text>
+                <Text style={styles.resultTitle}>Keywords ({metadata.keywords.length})</Text>
               </View>
               <TouchableOpacity
                 style={styles.copyButton}
