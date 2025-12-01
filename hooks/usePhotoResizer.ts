@@ -1,13 +1,14 @@
 
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { UploadedPhoto, ResizedPhoto } from '../types/PhotoTypes';
-import { resizeImageToAllSpecs } from '../utils/imageResizer';
+import { UploadedPhoto, ResizedPhoto, AppStoreSpec, APP_STORE_SPECS } from '../types/PhotoTypes';
+import { resizeImageToSelectedSpecs } from '../utils/imageResizer';
 
 export function usePhotoResizer() {
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [resizedPhotos, setResizedPhotos] = useState<ResizedPhoto[]>([]);
   const [isResizing, setIsResizing] = useState(false);
+  const [selectedSpecs, setSelectedSpecs] = useState<AppStoreSpec[]>([...APP_STORE_SPECS]);
 
   const pickImages = async () => {
     try {
@@ -49,12 +50,17 @@ export function usePhotoResizer() {
       return;
     }
 
+    if (selectedSpecs.length === 0) {
+      console.log('No specifications selected');
+      throw new Error('Please select at least one specification');
+    }
+
     setIsResizing(true);
     const allResized: ResizedPhoto[] = [];
 
     try {
       for (const photo of photos) {
-        const resized = await resizeImageToAllSpecs(photo.uri);
+        const resized = await resizeImageToSelectedSpecs(photo.uri, selectedSpecs);
         resized.forEach((img, index) => {
           allResized.push({
             id: `${photo.id}-${index}`,
@@ -85,6 +91,8 @@ export function usePhotoResizer() {
     photos,
     resizedPhotos,
     isResizing,
+    selectedSpecs,
+    setSelectedSpecs,
     pickImages,
     removePhoto,
     resizeAllPhotos,

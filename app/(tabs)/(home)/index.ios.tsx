@@ -7,11 +7,12 @@ import { usePhotoResizer } from '@/hooks/usePhotoResizer';
 import { PhotoGrid } from '@/components/PhotoGrid';
 import { ResizedPhotosList } from '@/components/ResizedPhotosList';
 import { AppDescriptionInput } from '@/components/AppDescriptionInput';
+import { SpecSelector } from '@/components/SpecSelector';
 import { IconSymbol } from '@/components/IconSymbol';
 import { AppMetadata } from '@/types/PhotoTypes';
 
 export default function HomeScreen() {
-  const { photos, resizedPhotos, isResizing, pickImages, removePhoto, resizeAllPhotos, clearAll } = usePhotoResizer();
+  const { photos, resizedPhotos, isResizing, selectedSpecs, setSelectedSpecs, pickImages, removePhoto, resizeAllPhotos, clearAll } = usePhotoResizer();
   const [metadata, setMetadata] = useState<AppMetadata | null>(null);
   const [currentStep, setCurrentStep] = useState<'upload' | 'resize' | 'describe'>('upload');
 
@@ -27,6 +28,11 @@ export default function HomeScreen() {
   const handleResize = async () => {
     if (photos.length === 0) {
       Alert.alert('No Photos', 'Please upload at least one photo first.');
+      return;
+    }
+
+    if (selectedSpecs.length === 0) {
+      Alert.alert('No Specifications', 'Please select at least one specification to resize.');
       return;
     }
 
@@ -100,17 +106,23 @@ export default function HomeScreen() {
 
             <PhotoGrid photos={photos} onRemove={removePhoto} />
 
+            <SpecSelector selectedSpecs={selectedSpecs} onSpecsChange={setSelectedSpecs} />
+
             {photos.length > 0 && (
               <View style={styles.actionButtons}>
-                <TouchableOpacity style={styles.primaryButton} onPress={handleResize}>
+                <TouchableOpacity 
+                  style={[styles.primaryButton, selectedSpecs.length === 0 && styles.primaryButtonDisabled]} 
+                  onPress={handleResize}
+                  disabled={selectedSpecs.length === 0}
+                >
                   <LinearGradient
-                    colors={[colors.secondary, colors.secondaryLight]}
+                    colors={selectedSpecs.length === 0 ? [colors.border, colors.border] : [colors.secondary, colors.secondaryLight]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.buttonGradient}
                   >
-                    <Text style={styles.primaryButtonText}>
-                      Resize to App Store Specs
+                    <Text style={[styles.primaryButtonText, selectedSpecs.length === 0 && styles.primaryButtonTextDisabled]}>
+                      Resize to Selected Specs
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -143,6 +155,9 @@ export default function HomeScreen() {
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>Resizing images...</Text>
+            <Text style={styles.loadingSubtext}>
+              Processing {photos.length} photo(s) to {selectedSpecs.length} specification(s)
+            </Text>
           </View>
         )}
 
@@ -265,6 +280,9 @@ const styles = StyleSheet.create({
     boxShadow: '0px 4px 12px rgba(6, 182, 212, 0.3)',
     elevation: 4,
   },
+  primaryButtonDisabled: {
+    opacity: 0.5,
+  },
   buttonGradient: {
     padding: 16,
     alignItems: 'center',
@@ -273,6 +291,9 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 16,
     fontWeight: '600',
+  },
+  primaryButtonTextDisabled: {
+    color: colors.textSecondary,
   },
   secondaryButton: {
     backgroundColor: colors.card,
@@ -324,6 +345,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textSecondary,
     marginTop: 16,
+  },
+  loadingSubtext: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginTop: 8,
+    opacity: 0.7,
   },
   successBanner: {
     marginHorizontal: 16,
