@@ -131,10 +131,10 @@ export default function HomeScreen() {
                 />
                 <Text style={styles.infoTitle}>App Store Specifications</Text>
               </View>
-              <Text style={styles.infoText}>- 1242 × 2688px (6.5" Portrait)</Text>
-              <Text style={styles.infoText}>- 2688 × 1242px (6.5" Landscape)</Text>
-              <Text style={styles.infoText}>- 1284 × 2778px (6.7" Portrait)</Text>
-              <Text style={styles.infoText}>- 2778 × 1284px (6.7" Landscape)</Text>
+              <Text style={styles.infoText}>- 1242 × 2688px (6.5&quot; Display)</Text>
+              <Text style={styles.infoText}>- 1284 × 2778px (6.7&quot; Display)</Text>
+              <Text style={styles.infoText}>- 2064 × 2752px (12.9&quot; iPad Pro)</Text>
+              <Text style={styles.infoText}>- 2048 × 2732px (12.9&quot; iPad Pro 2nd Gen)</Text>
             </View>
           </View>
         )}
