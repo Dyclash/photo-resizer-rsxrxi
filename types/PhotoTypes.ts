@@ -24,7 +24,7 @@ export interface AppMetadata {
 
 export const APP_STORE_SPECS = [
   { width: 1242, height: 2688, label: '6.5" Display (Portrait)' },
-  { width: 2688, height: 1242, label: '6.5" Display (Landscape)' },
   { width: 1284, height: 2778, label: '6.7" Display (Portrait)' },
-  { width: 2778, height: 1284, label: '6.7" Display (Landscape)' },
+  { width: 2064, height: 2752, label: '12.9" iPad Pro (Portrait)' },
+  { width: 2048, height: 2732, label: '12.9" iPad Pro (2nd Gen)' },
 ];
