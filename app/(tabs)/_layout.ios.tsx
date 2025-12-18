@@ -17,6 +17,10 @@ export default function TabLayout() {
         <Icon sf="play.rectangle.fill" />
         <Label>Android</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger key="natively" name="natively">
+        <Icon sf="globe" />
+        <Label>Natively</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger key="profile" name="profile">
         <Icon sf="person.fill" />
         <Label>Profile</Label>
