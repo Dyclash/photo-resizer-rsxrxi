@@ -7,7 +7,7 @@ import { usePhotoResizer } from '@/hooks/usePhotoResizer';
 import { PhotoGrid } from '@/components/PhotoGrid';
 import { ResizedPhotosList } from '@/components/ResizedPhotosList';
 import { AppDescriptionInput } from '@/components/AppDescriptionInput';
-import { SpecSelector } from '@/components/SpecSelector';
+import { SpecMenu } from '@/components/SpecMenu';
 import { IconSymbol } from '@/components/IconSymbol';
 import { AppMetadata } from '@/types/PhotoTypes';
 
@@ -57,6 +57,8 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      {currentStep === 'upload' && <SpecMenu selectedSpecs={selectedSpecs} onSpecsChange={setSelectedSpecs} />}
+      
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -106,8 +108,6 @@ export default function HomeScreen() {
 
             <PhotoGrid photos={photos} onRemove={removePhoto} />
 
-            <SpecSelector selectedSpecs={selectedSpecs} onSpecsChange={setSelectedSpecs} />
-
             {photos.length > 0 && (
               <View style={styles.actionButtons}>
                 <TouchableOpacity 
@@ -122,7 +122,7 @@ export default function HomeScreen() {
                     style={styles.buttonGradient}
                   >
                     <Text style={[styles.primaryButtonText, selectedSpecs.length === 0 && styles.primaryButtonTextDisabled]}>
-                      Resize to Selected Specs
+                      Resize to Selected Specs ({selectedSpecs.length})
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -155,6 +155,17 @@ export default function HomeScreen() {
                   color={colors.secondary}
                 />
                 <Text style={styles.formatText}>Format: PNG (highest quality)</Text>
+              </View>
+              <View style={styles.menuHint}>
+                <IconSymbol
+                  ios_icon_name="hand.tap.fill"
+                  android_material_icon_name="touch_app"
+                  size={16}
+                  color={colors.primary}
+                />
+                <Text style={styles.menuHintText}>
+                  Tap the menu icon in the top right to select specifications
+                </Text>
               </View>
             </View>
           </View>
@@ -358,6 +369,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.secondary,
     fontWeight: '600',
+  },
+  menuHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  menuHintText: {
+    flex: 1,
+    fontSize: 13,
+    color: colors.primary,
+    fontWeight: '600',
+    lineHeight: 18,
   },
   loadingContainer: {
     alignItems: 'center',

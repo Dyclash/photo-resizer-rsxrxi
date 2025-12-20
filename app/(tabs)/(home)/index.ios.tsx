@@ -7,7 +7,7 @@ import { usePhotoResizer } from '@/hooks/usePhotoResizer';
 import { PhotoGrid } from '@/components/PhotoGrid';
 import { ResizedPhotosList } from '@/components/ResizedPhotosList';
 import { AppDescriptionInput } from '@/components/AppDescriptionInput';
-import { SpecSelector } from '@/components/SpecSelector';
+import { SpecMenu } from '@/components/SpecMenu';
 import { IconSymbol } from '@/components/IconSymbol';
 import { AppMetadata } from '@/types/PhotoTypes';
 
@@ -57,6 +57,8 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      {currentStep === 'upload' && <SpecMenu selectedSpecs={selectedSpecs} onSpecsChange={setSelectedSpecs} />}
+      
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -106,8 +108,6 @@ export default function HomeScreen() {
 
             <PhotoGrid photos={photos} onRemove={removePhoto} />
 
-            <SpecSelector selectedSpecs={selectedSpecs} onSpecsChange={setSelectedSpecs} />
-
             {photos.length > 0 && (
               <View style={styles.actionButtons}>
                 <TouchableOpacity 
@@ -122,7 +122,7 @@ export default function HomeScreen() {
                     style={styles.buttonGradient}
                   >
                     <Text style={[styles.primaryButtonText, selectedSpecs.length === 0 && styles.primaryButtonTextDisabled]}>
-                      Resize to Selected Specs
+                      Resize to Selected Specs ({selectedSpecs.length})
                     </Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -147,6 +147,17 @@ export default function HomeScreen() {
               <Text style={styles.infoText}>- 1284 × 2778px (6.7&quot; Display)</Text>
               <Text style={styles.infoText}>- 2064 × 2752px (12.9&quot; iPad Pro)</Text>
               <Text style={styles.infoText}>- 2048 × 2732px (12.9&quot; iPad Pro 2nd Gen)</Text>
+              <View style={styles.menuHint}>
+                <IconSymbol
+                  ios_icon_name="hand.tap.fill"
+                  android_material_icon_name="touch_app"
+                  size={16}
+                  color={colors.primary}
+                />
+                <Text style={styles.menuHintText}>
+                  Tap the menu icon in the top right to select specifications
+                </Text>
+              </View>
             </View>
           </View>
         )}
@@ -335,6 +346,22 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: 6,
     lineHeight: 20,
+  },
+  menuHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  menuHintText: {
+    flex: 1,
+    fontSize: 13,
+    color: colors.primary,
+    fontWeight: '600',
+    lineHeight: 18,
   },
   loadingContainer: {
     alignItems: 'center',
