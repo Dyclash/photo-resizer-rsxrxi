@@ -21,6 +21,10 @@ export default function TabLayout() {
         <Icon sf="globe" />
         <Label>Natively</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger key="apps" name="apps">
+        <Icon sf="square.grid.2x2.fill" />
+        <Label>Apps</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger key="profile" name="profile">
         <Icon sf="person.fill" />
         <Label>Profile</Label>

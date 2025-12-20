@@ -31,6 +31,12 @@ export default function TabLayout() {
       label: 'Natively',
     },
     {
+      name: 'apps',
+      route: '/(tabs)/apps',
+      icon: 'apps',
+      label: 'Apps',
+    },
+    {
       name: 'profile',
       route: '/(tabs)/profile',
       icon: 'person',
@@ -51,6 +57,7 @@ export default function TabLayout() {
         <Stack.Screen key="ios-console" name="ios-console" />
         <Stack.Screen key="android-console" name="android-console" />
         <Stack.Screen key="natively" name="natively" />
+        <Stack.Screen key="apps" name="apps" />
         <Stack.Screen key="profile" name="profile" />
       </Stack>
       <FloatingTabBar tabs={tabs} />
